@@ -37,3 +37,41 @@ INSERT INTO
 UPDATE customers 
 SET postalcode="11122"
 WHERE city="Bag End"
+
+
+
+-- STRETCH PROBLEMS
+-- list orders grouped by customer showing the number of orders per customer. Rattlesnake Canyon Grocery should have 7 orders.
+SELECT customername, 
+COUNT(orders.customerid) AS 'number of orders'
+FROM customers
+LEFT JOIN orders 
+ON customers.customerid = orders.customerid
+GROUP BY orders.customerid
+
+-- list customers names and the number of orders per customer. Sort the list by number of orders in descending order. Ernst Handel should be at the top with 10 orders followed by QUICK-Stop, Rattlesnake Canyon Grocery and Wartian Herkku with 7 orders each.
+SELECT customername, 
+COUNT(orders.customerid) AS 'number of orders'
+FROM customers
+LEFT JOIN orders 
+ON customers.customerid = orders.customerid
+GROUP BY orders.customerid
+ORDER BY 2 DESC
+
+-- list orders grouped by customer's city showing number of orders per city. Returns 58 Records with Aachen showing 2 orders and Albuquerque showing 7 orders.
+SELECT city,
+COUNT(orders.customerid) AS 'number of orders'
+FROM customers
+CROSS JOIN orders 
+ON customers.customerid = orders.customerid
+GROUP BY city
+
+-- delete all customers that have no orders. Should delete 17 (or 18 if you haven't deleted the record added) records.
+DELETE FROM customers
+WHERE customerid IN (
+    SELECT customers.customerid FROM customers
+    LEFT JOIN orders
+    ON customers.customerid = orders.customerid
+    WHERE orderid IS NULL
+    GROUP BY customers.customerid
+);
